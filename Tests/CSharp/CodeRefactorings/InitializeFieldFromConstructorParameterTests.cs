@@ -18,11 +18,11 @@ class Foo
 }", @"
 class Foo
 {
-    readonly int x;
+    private readonly int mX;
 
     public Foo(int x, int y)
     {
-        this.x = x;
+        mX = x;
     }
 }");
         }

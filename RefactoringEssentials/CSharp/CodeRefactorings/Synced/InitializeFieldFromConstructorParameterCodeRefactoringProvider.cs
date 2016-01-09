@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Formatting;
+using System;
 
 namespace RefactoringEssentials.CSharp.CodeRefactorings
 {
@@ -43,23 +44,27 @@ namespace RefactoringEssentials.CSharp.CodeRefactorings
                         GettextCatalog.GetString("Initialize field from parameter"),
                         t2 =>
                         {
+                            var newFieldName = CreateFieldName(parameter.Identifier.ToString());
+
                             var newField = SyntaxFactory.FieldDeclaration(
                                 SyntaxFactory.VariableDeclaration(
                                     parameter.Type,
-                                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(SyntaxFactory.VariableDeclarator(parameter.Identifier)))
-                            ).WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)))
+                                    SyntaxFactory.SingletonSeparatedList<VariableDeclaratorSyntax>(SyntaxFactory.VariableDeclarator(newFieldName)))
+                            ).WithModifiers(SyntaxFactory.TokenList(
+                                SyntaxFactory.Token(SyntaxKind.PrivateKeyword),
+                                SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword)))
                             .WithAdditionalAnnotations(Formatter.Annotation);
 
                             var assignmentStatement = SyntaxFactory.ExpressionStatement(
                                 SyntaxFactory.AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
-                                    SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), SyntaxFactory.IdentifierName(parameter.Identifier)),
+                                    SyntaxFactory.IdentifierName(newFieldName),
                                     SyntaxFactory.IdentifierName(parameter.Identifier)
                                 )
                             ).WithAdditionalAnnotations(Formatter.Annotation);
 
                             var trackedRoot = root.TrackNodes(ctor);
-                            var newRoot = trackedRoot.InsertNodesBefore(trackedRoot.GetCurrentNode(ctor), new List<SyntaxNode>() {
+                            var newRoot = trackedRoot.InsertNodesBefore(trackedRoot.GetCurrentNode(ctor), new List<SyntaxNode> {
                                 newField
                             });
                             newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(ctor), ctor.WithBody(
@@ -70,6 +75,11 @@ namespace RefactoringEssentials.CSharp.CodeRefactorings
                         })
                 );
             }
+        }
+
+        private static string CreateFieldName(string parameterName)
+        {
+            return "m" + Char.ToUpper(parameterName[0]).ToString() + parameterName.Substring(1);
         }
     }
 }
