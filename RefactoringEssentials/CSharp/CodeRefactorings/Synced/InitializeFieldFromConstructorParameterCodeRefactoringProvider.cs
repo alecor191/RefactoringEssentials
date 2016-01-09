@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Formatting;
 using System;
+using System.Text;
 
 namespace RefactoringEssentials.CSharp.CodeRefactorings
 {
@@ -79,7 +80,13 @@ namespace RefactoringEssentials.CSharp.CodeRefactorings
 
         private static string CreateFieldName(string parameterName)
         {
-            return "m" + Char.ToUpper(parameterName[0]).ToString() + parameterName.Substring(1);
+            var builder = new StringBuilder(parameterName.Length + 1);
+
+            return builder
+                .Append('m')
+                .Append(Char.ToUpper(parameterName[0]))
+                .Append(parameterName, 1, parameterName.Length - 1)
+                .ToString();
         }
     }
 }
