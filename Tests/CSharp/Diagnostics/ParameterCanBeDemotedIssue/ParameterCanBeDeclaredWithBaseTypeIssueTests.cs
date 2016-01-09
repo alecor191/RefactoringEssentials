@@ -13,33 +13,33 @@ namespace RefactoringEssentials.Tests.CSharp.Diagnostics
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class A
 {
-	public virtual void Foo() {}
+    public virtual void Foo() {}
 }
 class B : A
 {
-	public virtual void Bar() {}
+    public virtual void Bar() {}
 }
 class C
 {
-	void F(B b)
-	{
-		b.Foo();
-	}
+    void F(B b)
+    {
+        b.Foo();
+    }
 }", @"
 class A
 {
-	public virtual void Foo() {}
+    public virtual void Foo() {}
 }
 class B : A
 {
-	public virtual void Bar() {}
+    public virtual void Bar() {}
 }
 class C
 {
-	void F(A b)
-	{
-		b.Foo();
-	}
+    void F(A b)
+    {
+        b.Foo();
+    }
 }");
         }
 
@@ -49,9 +49,9 @@ class C
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class A
 {
-	void F(A a1)
-	{
-	}
+    void F(A a1)
+    {
+    }
 }");
         }
 
@@ -64,10 +64,10 @@ interface IA
 }
 class A : IA
 {
-	void F(out A a1)
-	{
-		object.Equals(a1, null);
-	}
+    void F(out A a1)
+    {
+        object.Equals(a1, null);
+    }
 }");
         }
 
@@ -77,26 +77,26 @@ class A : IA
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IA
 {
-	void Foo();
+    void Foo();
 }
 class B : IA
 {
-	public virtual void Foo() {}
-	public virtual void Bar() {}
+    public virtual void Foo() {}
+    public virtual void Bar() {}
 }
 class TestBase
 {
-	public void F(B b) {
-		b.Foo();
-		b.Bar();
-	}
+    public void F(B b) {
+        b.Foo();
+        b.Bar();
+    }
 }
 class TestClass : TestBase
 {
-	public override void F(B b)
-	{
-		b.Foo();
-	}
+    public override void F(B b)
+    {
+        b.Foo();
+    }
 }");
         }
 
@@ -106,19 +106,19 @@ class TestClass : TestBase
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IA
 {
-	void Foo();
+    void Foo();
 }
 class B : IA
 {
-	public virtual void Foo() {}
-	public virtual void Bar() {}
+    public virtual void Foo() {}
+    public virtual void Bar() {}
 }
 class TestClass
 {
-	public virtual void F(B b)
-	{
-		b.Foo();
-	}
+    public virtual void F(B b)
+    {
+        b.Foo();
+    }
 }");
         }
 
@@ -128,19 +128,19 @@ class TestClass
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IA
 {
-	void Foo(string s);
+    void Foo(string s);
 }
 class B : IA
 {
-	public virtual void Foo(string s) {}
-	public string Property { get; }
+    public virtual void Foo(string s) {}
+    public string Property { get; }
 }
 class TestClass
 {
-	public void F(B b)
-	{
-		b.Foo(b.Property);
-	}
+    public void F(B b)
+    {
+        b.Foo(b.Property);
+    }
 }");
         }
 
@@ -150,35 +150,35 @@ class TestClass
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IA
 {
-	void Foo();
+    void Foo();
 }
 class B : IA
 {
-	public virtual void Foo() {}
-	public virtual void Bar() {}
+    public virtual void Foo() {}
+    public virtual void Bar() {}
 }
 class C
 {
-	void F(B b)
-	{
-		b.Foo();
-	}
+    void F(B b)
+    {
+        b.Foo();
+    }
 }", @"
 interface IA
 {
-	void Foo();
+    void Foo();
 }
 class B : IA
 {
-	public virtual void Foo() {}
-	public virtual void Bar() {}
+    public virtual void Foo() {}
+    public virtual void Bar() {}
 }
 class C
 {
-	void F(IA b)
-	{
-		b.Foo();
-	}
+    void F(IA b)
+    {
+        b.Foo();
+    }
 }");
         }
 
@@ -188,11 +188,11 @@ class C
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class C
 {
-	void F (bool b, bool c)
-	{
-		if (b && c)
-			return;
-	}
+    void F (bool b, bool c)
+    {
+        if (b && c)
+            return;
+    }
 }");
         }
 
@@ -202,93 +202,93 @@ class C
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IA1
 {
-	void Foo();
+    void Foo();
 }
 interface IA2
 {
-	void Bar();
+    void Bar();
 }
 class B : IA1, IA2
 {
-	public virtual void Foo() {}
-	public virtual void Bar() {}
+    public virtual void Foo() {}
+    public virtual void Bar() {}
 }
 class C : B {}
 class Test
 {
-	void F(C c)
-	{
-		c.Foo();
-		c.Bar();
-	}
+    void F(C c)
+    {
+        c.Foo();
+        c.Bar();
+    }
 }", @"
 interface IA1
 {
-	void Foo();
+    void Foo();
 }
 interface IA2
 {
-	void Bar();
+    void Bar();
 }
 class B : IA1, IA2
 {
-	public virtual void Foo() {}
-	public virtual void Bar() {}
+    public virtual void Foo() {}
+    public virtual void Bar() {}
 }
 class C : B {}
 class Test
 {
-	void F(B c)
-	{
-		c.Foo();
-		c.Bar();
-	}
+    void F(B c)
+    {
+        c.Foo();
+        c.Bar();
+    }
 }");
         }
 
         string baseInput = @"
 interface IA
 {
-	void Foo();
+    void Foo();
 }
 interface IB : IA
 {
-	void Bar();
+    void Bar();
 }
 interface IC : IA
 {
-	new void Foo();
-	void Baz();
+    new void Foo();
+    void Baz();
 }
 class D : IB
 {
-	public void Foo() {}
-	public void Bar() {}
+    public void Foo() {}
+    public void Bar() {}
 }
 class E : D, IC
 {
-	public void Baz() {}
-	void IC.Foo() {}
+    public void Baz() {}
+    void IC.Foo() {}
 }";
 
-        [Ignore]
+        [Ignore("")]
         [Test]
         public void FindsTopInterface()
         {
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(baseInput + @"
 class Test
 {
-	void F(E e)
-	{
-		e.Foo();
-	}
+    void F(E e)
+    {
+        e.Foo();
+    }
 }", baseInput + @"
 class Test
 {
-	void F(IA e)
-	{
-		e.Foo();
-	}
+    void F(IA e)
+    {
+        e.Foo();
+    }
 }");
         }
 
@@ -298,18 +298,18 @@ class Test
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(baseInput + @"
 class Test
 {
-	void F(IB b)
-	{
-		Bar (b);
-	}
-	
-	void Bar (IA a)
-	{
-	}
+    void F(IB b)
+    {
+        Bar (b);
+    }
+    
+    void Bar (IA a)
+    {
+    }
 
-	void Bar (IB b)
-	{
-	}
+    void Bar (IB b)
+    {
+    }
 }");
         }
 
@@ -319,12 +319,12 @@ class Test
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(baseInput + @"
 class Test
 {
-	void F(IB b)
-	{
-		IB b2;
-		b2 = b;
-		object.Equals(b, b2);
-	}
+    void F(IB b)
+    {
+        IB b2;
+        b2 = b;
+        object.Equals(b, b2);
+    }
 }");
         }
 
@@ -334,14 +334,14 @@ class Test
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(baseInput + @"
 class Test
 {
-	void F(IB b)
-	{
-		Generic (b);
-	}
+    void F(IB b)
+    {
+        Generic (b);
+    }
 
-	void Generic<T> (T arg) where T : IA
-	{
-	}
+    void Generic<T> (T arg) where T : IA
+    {
+    }
 }");
         }
 
@@ -351,15 +351,15 @@ class Test
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(baseInput + @"
 class Test
 {
-	void Foo (IB b)
-	{
-		var b2 = b;
-		Foo (b2);
-	}
+    void Foo (IB b)
+    {
+        var b2 = b;
+        Foo (b2);
+    }
 
-	void Foo (IA a)
-	{
-	}
+    void Foo (IA a)
+    {
+    }
 }");
         }
 
@@ -369,27 +369,27 @@ class Test
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(baseInput + @"
 class Test
 {
-	void F(E e)
-	{
-		e.Foo();
-		DemandType(e);
-	}
+    void F(E e)
+    {
+        e.Foo();
+        DemandType(e);
+    }
 
-	void DemandType(D d)
-	{
-	}
+    void DemandType(D d)
+    {
+    }
 }", baseInput + @"
 class Test
 {
-	void F(D e)
-	{
-		e.Foo();
-		DemandType(e);
-	}
+    void F(D e)
+    {
+        e.Foo();
+        DemandType(e);
+    }
 
-	void DemandType(D d)
-	{
-	}
+    void DemandType(D d)
+    {
+    }
 }");
         }
 
@@ -400,23 +400,23 @@ class Test
 delegate void FooDelegate (string s);
 interface IBase
 {
-	void Bar();
+    void Bar();
 }
 interface IDerived : IBase
 {
-	void Foo(string s);
+    void Foo(string s);
 }
 class TestClass
 {
-	public void Bar (IDerived derived)
-	{
-		derived.Bar();
-		Baz (derived.Foo);
-	}
+    public void Bar (IDerived derived)
+    {
+        derived.Bar();
+        Baz (derived.Foo);
+    }
 
-	void Baz (FooDelegate fd)
-	{
-	}
+    void Baz (FooDelegate fd)
+    {
+    }
 }");
         }
 
@@ -427,19 +427,19 @@ class TestClass
 delegate void FooDelegate (string s);
 interface IBase
 {
-	void Bar();
+    void Bar();
 }
 interface IDerived : IBase
 {
-	void Foo(string s);
+    void Foo(string s);
 }
 class TestClass
 {
-	public void Bar (IDerived derived)
-	{
-		derived.Bar();
-		FooDelegate d = derived.Foo;
-	}
+    public void Bar (IDerived derived)
+    {
+        derived.Bar();
+        FooDelegate d = derived.Foo;
+    }
 }");
         }
 
@@ -450,43 +450,43 @@ class TestClass
 delegate void FooDelegate (string s);
 interface IBase
 {
-	void Bar();
+    void Bar();
 }
 interface IDerived : IBase
 {
-	void Foo(string s);
+    void Foo(string s);
 }
 class TestClass
 {
-	public void Bar (IDerived derived)
-	{
-		derived.Bar();
-		FooDelegate d;
-		d = derived.Foo;
-	}
+    public void Bar (IDerived derived)
+    {
+        derived.Bar();
+        FooDelegate d;
+        d = derived.Foo;
+    }
 }");
         }
 
-        [Ignore]
+        [Ignore("")]
         [Test]
         public void AccountsForIndexers()
         {
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestClass
 {
-	void Write(string[] s)
-	{
-		object.Equals(s, s);
-		var element = s[1];
-	}
+    void Write(string[] s)
+    {
+        object.Equals(s, s);
+        var element = s[1];
+    }
 }", 1, @"
 class TestClass
 {
-	void Write(System.Collections.Generic.IList<string> s)
-	{
-		object.Equals(s, s);
-		var element = s[1];
-	}
+    void Write(System.Collections.Generic.IList<string> s)
+    {
+        object.Equals(s, s);
+        var element = s[1];
+    }
 }", 1, 1);
         }
 
@@ -496,15 +496,15 @@ class TestClass
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestClass
 {
-	void Write(string[] s)
-	{
-		var i = s.Length;
-		SetValue (out s[1]);
-	}
+    void Write(string[] s)
+    {
+        var i = s.Length;
+        SetValue (out s[1]);
+    }
 
-	void SetValue (out string s)
-	{
-	} 
+    void SetValue (out string s)
+    {
+    } 
 }");
         }
 
@@ -514,10 +514,10 @@ class TestClass
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestClass
 {
-	void Write(params string[] s)
-	{
-		System.Console.WriteLine (s);
-	}
+    void Write(params string[] s)
+    {
+        System.Console.WriteLine (s);
+    }
 }");
         }
 
@@ -527,11 +527,11 @@ class TestClass
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestClass
 {
-	public static void Main (string[] args)
-	{
-		if (args.Length > 2) {
-		}
-	}
+    public static void Main (string[] args)
+    {
+        if (args.Length > 2) {
+        }
+    }
 }");
         }
 
@@ -541,14 +541,14 @@ class TestClass
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IHasFoo
 {
-	void Foo (string s);
+    void Foo (string s);
 }
 class TestClass : IHasFoo
 {
-	public void Foo(string s)
-	{
-		object o = s;
-	} 
+    public void Foo(string s)
+    {
+        object o = s;
+    } 
 }");
         }
 
@@ -558,15 +558,15 @@ class TestClass : IHasFoo
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 enum ApplicableValues
 {
-	None,
-	Some
+    None,
+    Some
 }
 class TestClass
 {
-	public void Foo(ApplicableValues av)
-	{
-		object o = av;
-	} 
+    public void Foo(ApplicableValues av)
+    {
+        object o = av;
+    } 
 }");
         }
 
@@ -576,37 +576,37 @@ class TestClass
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestBase
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (Test t)
-	{
-		t.Foo();
-	}
-	
-	public override void Foo()
-	{
-	}
+    void F (Test t)
+    {
+        t.Foo();
+    }
+    
+    public override void Foo()
+    {
+    }
 }", @"
 class TestBase
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (TestBase t)
-	{
-		t.Foo();
-	}
-	
-	public override void Foo()
-	{
-	}
+    void F (TestBase t)
+    {
+        t.Foo();
+    }
+    
+    public override void Foo()
+    {
+    }
 }");
         }
 
@@ -616,20 +616,20 @@ class Test : TestBase
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestBase
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (Test t)
-	{
-		t.Foo();
-	}
-	
-	public new void Foo()
-	{
-	}
+    void F (Test t)
+    {
+        t.Foo();
+    }
+    
+    public new void Foo()
+    {
+    }
 }");
         }
 
@@ -639,49 +639,49 @@ class Test : TestBase
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class TestBaseBase
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class TestBase : TestBaseBase
 {
-	protected virtual new void Foo()
-	{
-	}
+    protected virtual new void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (Test t)
-	{
-		t.Foo();
-	}
-	
-	public override void Foo()
-	{
-	}
+    void F (Test t)
+    {
+        t.Foo();
+    }
+    
+    public override void Foo()
+    {
+    }
 }", @"
 class TestBaseBase
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class TestBase : TestBaseBase
 {
-	protected virtual new void Foo()
-	{
-	}
+    protected virtual new void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (TestBase t)
-	{
-		t.Foo();
-	}
-	
-	public override void Foo()
-	{
-	}
+    void F (TestBase t)
+    {
+        t.Foo();
+    }
+    
+    public override void Foo()
+    {
+    }
 }");
         }
 
@@ -691,57 +691,57 @@ class Test : TestBase
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 interface IFoo
 {
-	void Foo();
+    void Foo();
 }
 class TestBaseBase : IFoo
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class TestBase : TestBaseBase
 {
-	protected virtual new void Foo()
-	{
-	}
+    protected virtual new void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (Test t)
-	{
-		t.Foo();
-	}
-	
-	protected override void Foo()
-	{
-	}
+    void F (Test t)
+    {
+        t.Foo();
+    }
+    
+    protected override void Foo()
+    {
+    }
 }", @"
 interface IFoo
 {
-	void Foo();
+    void Foo();
 }
 class TestBaseBase : IFoo
 {
-	public virtual void Foo()
-	{
-	}
+    public virtual void Foo()
+    {
+    }
 }
 class TestBase : TestBaseBase
 {
-	protected virtual new void Foo()
-	{
-	}
+    protected virtual new void Foo()
+    {
+    }
 }
 class Test : TestBase
 {
-	void F (TestBase t)
-	{
-		t.Foo();
-	}
-	
-	protected override void Foo()
-	{
-	}
+    void F (TestBase t)
+    {
+        t.Foo();
+    }
+    
+    protected override void Foo()
+    {
+    }
 }");
         }
 
@@ -753,16 +753,16 @@ class Test : TestBase
         {
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"class Test
 {
-	object Foo (object[] arr)
-	{
-	    return arr [0];
-	}
+    object Foo (object[] arr)
+    {
+        return arr [0];
+    }
 }", 1, @"class Test
 {
-	object Foo (System.Collections.IList arr)
-	{
-	    return arr [0];
-	}
+    object Foo (System.Collections.IList arr)
+    {
+        return arr [0];
+    }
 }");
         }
 
@@ -771,16 +771,16 @@ class Test : TestBase
         {
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"class Test
 {
-	int Foo (int[] arr)
-	{
-	    return arr [0];
-	}
+    int Foo (int[] arr)
+    {
+        return arr [0];
+    }
 }", 1, @"class Test
 {
-	int Foo (System.Collections.Generic.IList<int> arr)
-	{
-	    return arr [0];
-	}
+    int Foo (System.Collections.Generic.IList<int> arr)
+    {
+        return arr [0];
+    }
 }");
         }
 
@@ -790,14 +790,14 @@ class Test : TestBase
             Test<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"using System; using System.Linq; using System.Collections.Generic;
 class Test
 {
-	IEnumerable<User> users;
-	User GetUser (String id)
-	{
-		return users.Where(u => u.Name == id).SingleOrDefault();
-	}
+    IEnumerable<User> users;
+    User GetUser (String id)
+    {
+        return users.Where(u => u.Name == id).SingleOrDefault();
+    }
 }
 class User {
-	public string Name;
+    public string Name;
 }
 ", 0);
         }
@@ -808,19 +808,19 @@ class User {
             Analyze<ParameterCanBeDeclaredWithBaseTypeAnalyzer>(@"
 class A
 {
-	public virtual void Foo() {}
+    public virtual void Foo() {}
 }
 class B : A
 {
-	public virtual void Bar() {}
+    public virtual void Bar() {}
 }
 class C
 {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage(""Microsoft.Design"", ""CA1011:ConsiderPassingBaseTypesAsParameters"")]
-	void F(B b)
-	{
-		b.Foo();
-	}
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(""Microsoft.Design"", ""CA1011:ConsiderPassingBaseTypesAsParameters"")]
+    void F(B b)
+    {
+        b.Foo();
+    }
 }");
         }
 
@@ -831,18 +831,18 @@ class C
 
 class A
 {
-	public virtual void Foo() {}
+    public virtual void Foo() {}
 }
 class B : A
 {
-	public virtual void Bar() {}
+    public virtual void Bar() {}
 }
 class C
 {
-	void F(B b)
-	{
-		b.Foo();
-	}
+    void F(B b)
+    {
+        b.Foo();
+    }
 }");
         }
 
@@ -858,10 +858,10 @@ using System;
 
 public class Test
 {
-	public void Foo (Exception ex)
-	{
-		System.Console.WriteLine (ex.HelpLink);
-	}
+    public void Foo (Exception ex)
+    {
+        System.Console.WriteLine (ex.HelpLink);
+    }
 }
 ");
         }
@@ -874,10 +874,10 @@ public class Test
 
 class Test
 {
-	int Foo (ICollection<object> arr)
-	{
-		return arr.Count;
-	}
+    int Foo (ICollection<object> arr)
+    {
+        return arr.Count;
+    }
 }");
         }
 

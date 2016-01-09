@@ -29,7 +29,7 @@ namespace RefactoringEssentials.Tests.CSharp.CodeRefactorings
 }");
         }
 
-        [Ignore()]
+        [Ignore("")]
         [Test]
         public void TestSimplify()
         {

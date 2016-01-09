@@ -69,9 +69,9 @@ namespace RefactoringEssentials.Tests
         internal class TestWorkspace : Workspace
         {
             readonly static HostServices services = Microsoft.CodeAnalysis.Host.Mef.MefHostServices.DefaultHost;/* MefHostServices.Create(new [] { 
-				typeof(MefHostServices).Assembly,
-				typeof(Microsoft.CodeAnalysis.CSharp.Formatting.CSharpFormattingOptions).Assembly
-			});*/
+                typeof(MefHostServices).Assembly,
+                typeof(Microsoft.CodeAnalysis.CSharp.Formatting.CSharpFormattingOptions).Assembly
+            });*/
 
 
             public TestWorkspace(string workspaceKind = "Test") : base(services, workspaceKind)
