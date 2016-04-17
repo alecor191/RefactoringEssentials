@@ -25,6 +25,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
 
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxNodeAction(
                 (nodeContext) =>
                 {
@@ -40,8 +41,6 @@ namespace RefactoringEssentials.CSharp.Diagnostics
         static bool TryGetDiagnostic(SyntaxNodeAnalysisContext nodeContext, out IEnumerable<Diagnostic> diagnostic)
         {
             diagnostic = default(IEnumerable<Diagnostic>);
-            if (nodeContext.IsFromGeneratedCode())
-                return false;
 
             var node = nodeContext.Node as ConstructorDeclarationSyntax;
             var type = node.Parent as TypeDeclarationSyntax;
@@ -50,7 +49,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
                 return false;
             }
             var visitor = new VirtualCallFinderVisitor(nodeContext, node, type);
-            visitor.Visit(node);
+            visitor.Visit(node.Body);
             diagnostic = visitor.Diagnostics;
             return true;
         }
@@ -75,6 +74,8 @@ namespace RefactoringEssentials.CSharp.Diagnostics
                 var info = nodeContext.SemanticModel.GetSymbolInfo(n);
                 var symbol = info.Symbol;
                 if ((symbol == null) || (symbol.ContainingType == null) || symbol.ContainingType.Locations.Where(loc => loc.IsInSource && loc.SourceTree.FilePath == type.SyntaxTree.FilePath).All(loc => !type.Span.Contains(loc.SourceSpan)))
+                    return;
+                if (symbol is ITypeSymbol)
                     return;
                 if (!symbol.IsSealed && (symbol.IsVirtual || symbol.IsAbstract || symbol.IsOverride))
                 {

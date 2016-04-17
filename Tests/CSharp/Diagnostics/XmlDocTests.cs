@@ -4,58 +4,49 @@ using RefactoringEssentials.CSharp.Diagnostics;
 namespace RefactoringEssentials.Tests.CSharp.Diagnostics
 {
     [TestFixture]
-    [Ignore("TODO: Issue not ported yet")]
     public class XmlDocTests : CSharpDiagnosticTestBase
     {
         [Test]
         public void TestBeforeNamespace()
         {
-            Test<XmlDocAnalyzer>(@"
-/// foo
-namespace Foo {}
-", @"
-namespace Foo {}
+            Analyze<XmlDocAnalyzer>(@"
+$/// foo
+$namespace Foo {}
 ");
         }
 
         [Test]
         public void TestBeforeUsing()
         {
-            Test<XmlDocAnalyzer>(@"
-/// foo
-using System;
-", @"
-using System;
+            Analyze<XmlDocAnalyzer>(@"
+$/// foo
+$using System;
 ");
         }
 
         [Test]
         public void TestBeforeUsingAlias()
         {
-            Test<XmlDocAnalyzer>(@"
-/// foo
-using A = System;
-", @"
-using A = System;
+            Analyze<XmlDocAnalyzer>(@"
+$/// foo
+$using A = System;
 ");
         }
 
         [Test]
         public void TestBeforeExternAlias()
         {
-            Test<XmlDocAnalyzer>(@"
-/// foo
-extern alias System;
-", @"
-extern alias System;
+            Analyze<XmlDocAnalyzer>(@"
+$/// foo
+$extern alias System;
 ");
         }
 
         [Test]
         public void TestTypeParameter()
         {
-            TestIssue<XmlDocAnalyzer>(@"
-/// <typeparam name=""Undefined""></typeparam>
+            Analyze<XmlDocAnalyzer>(@"
+/// <typeparam name=""$Undefined$""></typeparam>
 class Foo {}
 
 /// <typeparam name=""T""></typeparam>
@@ -66,20 +57,20 @@ class Foo2<T> {}
         [Test]
         public void TestWrongMethodParameter()
         {
-            TestIssue<XmlDocAnalyzer>(@"
+            Analyze<XmlDocAnalyzer>(@"
 class Foo {
-	/// <param name=""undefined""></param>
+	/// <param name=""$undefined$""></param>
 	/// <param name=""y""></param>
 	/// <param name=""z""></param>
 	public void FooBar(int x, int y, int z)
 	{
 	}
 
-	/// <param name=""x1""></param>
+	/// <param name=""$x1$""></param>
 	/// <param name=""y""></param>
 	int this[int x, int y] { get { return 1;  } }
 }
-", 2);
+");
         }
 
         [Test]
@@ -118,7 +109,7 @@ namespace Foo {
         }
 
         /// <summary>
-        /// Bug 17729 - Incorrect XML-docs warning about 'value' paramref 
+        /// Bug 17729 - Incorrect XML-docs warning about 'value' paramref
         /// </summary>
         [Test]
         public void TestBug17729()
@@ -147,11 +138,16 @@ namespace Foo
 	public interface IGroupingProvider
 	{
 		IGroupingProvider Next { get; set; }
-		
-		/// <summary>
-		/// Occurs when <see cref=""Next""/> changes.
-		/// </summary>
-		event EventHandler<EventArgs> NextChanged;
+
+        /// <summary>
+        /// Occurs when <see cref=""Next""/> changes.
+        /// </summary>
+        event EventHandler<EventArgs> NextChanged;
+
+        /// <summary>
+        /// Occurs when <see cref=""$Next2$""/> changes.
+        /// </summary>
+        event EventHandler<EventArgs> OtherNextChanged;
 	}
 }
 ");
@@ -160,7 +156,7 @@ namespace Foo
         [Test]
         public void TestEventComment()
         {
-            TestIssue<XmlDocAnalyzer>(@"
+            Analyze<XmlDocAnalyzer>(@"
 using System;
 
 namespace Foo
@@ -168,13 +164,44 @@ namespace Foo
 	public interface IGroupingProvider
 	{
 		/// <summa
-		event EventHandler<EventArgs> NextChanged;
+$$		event EventHandler<EventArgs> NextChanged;
 	}
 }
-", 1);
+");
+        }
+        /// <summary>
+        /// XmlDocAnalyzer causes unexpected exception which crashes Visual Studio #180
+        /// </summary>
+        [Test]
+        public void TestIssue180()
+        {
+            Analyze<XmlDocAnalyzer>(@"
+class Foo {
+    /// <param name=""$>$</param>
+    public void FooBar(int x, int y, int z)
+    {
+    }
+}
+");
+        }
+
+        [Test]
+        public void TestDelegateDeclaration()
+        {
+            Analyze<XmlDocAnalyzer>(@"
+class Foo {
+    /// <summary>
+    /// </summary>
+    /// <param name=""$message$"">The data.</param>
+    public delegate void FooEventHandler(byte[] data);
+
+    /// <summary>
+    /// </summary>
+    /// <param name=""data"">The data.</param>
+    public delegate void BarEventHandler(byte[] data);
+}
+");
         }
     }
-
-
 }
 

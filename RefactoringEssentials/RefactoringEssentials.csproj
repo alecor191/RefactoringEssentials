@@ -43,9 +43,17 @@
   <PropertyGroup>
     <IncludeCopyLocalReferencesInVSIXContainer>false</IncludeCopyLocalReferencesInVSIXContainer>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\CodeContractsCodeRefactoringProvider.cs" />
     <Compile Include="Common\NotPortedYetAttribute.cs" />
+    <Compile Include="Common\RoslynReflectionUsageAttribute.cs" />
     <Compile Include="Converter\CodeConverter.cs" />
     <Compile Include="Converter\CodeWithOptions.cs" />
     <Compile Include="Converter\ConversionResult.cs" />
@@ -53,7 +61,10 @@
     <Compile Include="CSharp\CodeRefactorings\Synced\ContractRequiresNotNullCodeRefactoringProvider.cs" />
     <Compile Include="CSharp\CodeRefactorings\Synced\ContractEnsuresNotNullReturnRefactoringProvider.cs" />
     <Compile Include="CSharp\CodeRefactorings\Synced\MergeNestedIfAction.cs" />
+    <Compile Include="CSharp\CodeRefactorings\Synced\ConvertInstanceToStaticMethodCodeRefactoringProvider.cs" />
     <Compile Include="CSharp\ConvertUnitTestToVB.cs" />
+    <Compile Include="CSharp\Diagnostics\Custom\AvoidAsyncVoidAnalyzer.cs" />
+    <Compile Include="CSharp\Diagnostics\Custom\RoslynUsageAnalyzer.cs" />
     <Compile Include="CSharp\SyntaxExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CSharp\CodeRefactorings\Synced\AddAnotherAccessorCodeRefactoringProvider.cs" />
@@ -144,7 +155,6 @@
     <Compile Include="CSharp\CodeRefactorings\Uncategorized\LinqQueryToFluentAction.cs" />
     <Compile Include="CSharp\CodeRefactorings\Uncategorized\MoveToOuterScopeAction.cs" />
     <Compile Include="CSharp\CodeRefactorings\Uncategorized\PutInsideUsingAction.cs" />
-    <Compile Include="CSharp\CodeRefactorings\Uncategorized\SortUsingsAction.cs" />
     <Compile Include="CSharp\CodeRefactorings\Uncategorized\UseStringFormatAction.cs" />
     <Compile Include="CSharp\Diagnostics\CodeActionFactory.cs" />
     <Compile Include="CSharp\Diagnostics\DiagnosticFactory.cs" />
@@ -157,8 +167,6 @@
     <Compile Include="CSharp\Diagnostics\Custom\CompilerErrors\CS0169FieldIsNeverUsedAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\CompilerErrors\CS0618UsageOfObsoleteMemberAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\CompilerErrors\CS1729TypeHasNoConstructorWithNArgumentsAnalyzer.cs" />
-    <Compile Include="CSharp\Diagnostics\Custom\CompilerErrors\ExpressionIsNeverOfProvidedTypeAnalyzer.cs" />
-    <Compile Include="CSharp\Diagnostics\Custom\CompilerErrors\MissingInterfaceMemberImplementationAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\CompilerErrors\StaticConstructorParameterAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\AdditionalOfTypeAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\BaseMethodParameterNameMismatchAnalyzer.cs" />
@@ -204,7 +212,6 @@
     <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\PolymorphicFieldLikeEventInvocationAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\PossibleAssignmentToReadonlyFieldAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\PossibleMultipleEnumerationAnalyzer.cs" />
-    <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\StaticFieldInGenericTypeAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\ThreadStaticAtInstanceFieldAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\ValueParameterNotUsedAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Synced\CompilerErrors\ProhibitedModifiersAnalyzer.cs" />
@@ -480,7 +487,6 @@
     <Compile Include="CSharp\Diagnostics\Custom\RedundantAssignmentCodeFixProvider.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\RedundantInternalCodeFixProvider.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\RedundantPrivateCodeFixProvider.cs" />
-    <Compile Include="CSharp\Diagnostics\Custom\XmlDocCodeFixProvider.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\NameOfSuggestionAnalyzer.cs" />
     <Compile Include="CSharp\Diagnostics\Custom\NameOfSuggestionCodeFixProvider.cs" />
     <Compile Include="CSharp\Diagnostics\DocumentChangeAction.cs" />
@@ -503,6 +509,7 @@
     <Compile Include="Util\GeneratedCodeRecognition.cs" />
     <Compile Include="Util\HelpLink.cs" />
     <Compile Include="Util\NRefactory6Host.cs" />
+    <Compile Include="Util\RoslynReflection.cs" />
     <Compile Include="Util\SyntaxExtensions.cs" />
     <Compile Include="Util\TypeExtensions.cs" />
     <Compile Include="Util\CSharpUtil.cs" />
@@ -577,30 +584,68 @@
     <Compile Include="VB\Diagnostics\Synced\NUnit\NonPublicMethodWithTestAttributeAnalyzer.cs" />
     <Compile Include="VB\Diagnostics\Synced\NUnit\NonPublicMethodWithTestAttributeCodeFixProvider.cs" />
     <Compile Include="Util\NameGenerator.cs" />
+    <Compile Include="Util\NameProposalService.cs" />
+    <Compile Include="Util\Flow\FlowState.cs" />
+    <Compile Include="Util\Flow\FlowAnalysis.cs" />
+    <Compile Include="Util\Flow\FlowLocation.cs" />
+    <Compile Include="Util\Flow\FlowAnalyzer.cs" />
+    <Compile Include="Util\Flow\NullFlowState.cs" />
+    <Compile Include="Xml\TokenReader.cs" />
+    <Compile Include="Xml\TextType.cs" />
+    <Compile Include="Xml\TagReader.cs" />
+    <Compile Include="Xml\TagMatchingHeuristics.cs" />
+    <Compile Include="Xml\SyntaxError.cs" />
+    <Compile Include="Xml\ReuseEqualityComparer.cs" />
+    <Compile Include="Xml\ObjectIterator.cs" />
+    <Compile Include="Xml\Log.cs" />
+    <Compile Include="Xml\InternalDocument.cs" />
+    <Compile Include="Xml\IncrementalParserState.cs" />
+    <Compile Include="Xml\DocumentationElement.cs" />
+    <Compile Include="Xml\AXmlVisitor.cs" />
+    <Compile Include="Xml\AXmlText.cs" />
+    <Compile Include="Xml\AXmlTag.cs" />
+    <Compile Include="Xml\AXmlReader.cs" />
+    <Compile Include="Xml\AXmlParser.cs" />
+    <Compile Include="Xml\AXmlObject.cs" />
+    <Compile Include="Xml\AXmlElement.cs" />
+    <Compile Include="Xml\AXmlDocument.cs" />
+    <Compile Include="Xml\AXmlAttribute.cs" />
+    <Compile Include="Xml\LazyInit.cs" />
+    <Compile Include="Xml\TreeTraversal.cs" />
+    <Compile Include="Util\Analysis\ControlFlow.cs" />
+    <Compile Include="Util\Analysis\ReachabilityAnalysis.cs" />
+    <Compile Include="Util\FormatStringHelper.cs" />
+    <Compile Include="Util\CompositieFormatStringParser\TextSegment.cs" />
+    <Compile Include="Util\CompositieFormatStringParser\IFormatStringSegment.cs" />
+    <Compile Include="Util\CompositieFormatStringParser\IFormatStringError.cs" />
+    <Compile Include="Util\CompositieFormatStringParser\FormatStringSegmentBase.cs" />
+    <Compile Include="Util\CompositieFormatStringParser\FormatItem.cs" />
+    <Compile Include="Util\CompositieFormatStringParser\CompositeFormatStringParser.cs" />
+    <Compile Include="CSharp\Diagnostics\Synced\CodeQuality\StaticFieldOrAutoPropertyInGenericTypeAnalyzer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.1.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.1.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.1.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.1.1.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.1.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.VisualBasic.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.1.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -627,8 +672,8 @@
       <HintPath>..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.1.1.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.1.2.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -641,6 +686,7 @@
     <Content Include="RefactoringEssentials.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RefactoringEssentials.nuspec</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="buildlibrarypackage.cmd">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -680,6 +726,7 @@
     <None Include="tools\uninstall.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Xml\ICSharpCode.NRefactory.Xml.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="missing.md" />
@@ -729,7 +776,7 @@
       <NuGet>$(SolutionDir)\.nuget\NuGet.exe</NuGet>
       <NuGet Condition="$(OS)=='Unix'">mono $(NuGet)</NuGet>
     </PropertyGroup>
-    <Exec Condition="$(SolutionDir) != $([System.IO.Path]::GetFullPath('..'))" Command="$(NuGet) restore -SolutionDirectory .." />
+    <Exec Condition="$(SolutionDir) != $([System.IO.Path]::GetFullPath('..')) And '$(Configuration)' != 'Mono_Debug' And '$(Configuration)' != 'Mono_Release'" Command="$(NuGet) restore -SolutionDirectory .." />
   </Target>
   <PropertyGroup>
   </PropertyGroup>
@@ -742,13 +789,13 @@
   -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono_Debug|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug_Mono</OutputPath>
+    <OutputPath>..\..\..\build\bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Mono_Release|AnyCPU' ">
     <Optimize>false</Optimize>
-    <OutputPath>bin\Mono_Release</OutputPath>
+    <OutputPath>..\..\..\build\bin</OutputPath>
     <WarningLevel>4</WarningLevel>
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>

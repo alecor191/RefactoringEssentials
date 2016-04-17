@@ -28,6 +28,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
 
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxNodeAction(
                 (nodeContext) =>
                 {
@@ -42,14 +43,16 @@ namespace RefactoringEssentials.CSharp.Diagnostics
         static bool TryGetDiagnostic(SyntaxNodeAnalysisContext nodeContext, out Diagnostic diagnostic)
         {
             diagnostic = default(Diagnostic);
-            if (nodeContext.IsFromGeneratedCode())
-                return false;
 
             var localVariableStatement = nodeContext.Node as LocalDeclarationStatementSyntax;
 
             if (localVariableStatement != null)
             {
                 var localVariableSyntax = localVariableStatement.Declaration;
+
+                // 'var' is not allowed with more than one variable declarator
+                if (localVariableSyntax.Variables.Count > 1)
+                    return false;
 
                 if (!TryValidateLocalVariableType(localVariableStatement, localVariableSyntax))
                     return false;
@@ -103,7 +106,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
                 if (arrayCreationExpressionSyntax.Type.IsMissing)
                     return false;
 
-                var arrayType = nodeContext.SemanticModel.GetTypeInfo(arrayCreationExpressionSyntax).ConvertedType;
+                var arrayType = nodeContext.SemanticModel.GetTypeInfo(arrayCreationExpressionSyntax).Type;
                 return arrayType != null && arrayCreationExpressionSyntax.Initializer != null && variableType.Equals(arrayType);
             }
 
@@ -115,7 +118,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
             var objectCreationExpressionSyntax = initializerExpression as ObjectCreationExpressionSyntax;
             if (objectCreationExpressionSyntax != null)
             {
-                var objectType = nodeContext.SemanticModel.GetTypeInfo(objectCreationExpressionSyntax, nodeContext.CancellationToken).ConvertedType;
+                var objectType = nodeContext.SemanticModel.GetTypeInfo(objectCreationExpressionSyntax, nodeContext.CancellationToken).Type;
                 return objectType != null && variableType.Equals(objectType);
             }
 
@@ -127,7 +130,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
             var simpleMemberAccess = initializerExpression as MemberAccessExpressionSyntax;
             if (simpleMemberAccess != null)
             {
-                var propertyType = nodeContext.SemanticModel.GetTypeInfo(simpleMemberAccess, nodeContext.CancellationToken).ConvertedType;
+                var propertyType = nodeContext.SemanticModel.GetTypeInfo(simpleMemberAccess, nodeContext.CancellationToken).Type;
                 return propertyType != null && variableType.Equals(propertyType);
             }
 
@@ -139,7 +142,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
             var asBinaryExpression = initializerExpression as BinaryExpressionSyntax;
             if (asBinaryExpression != null && asBinaryExpression.IsKind(SyntaxKind.AsExpression))
             {
-                var castType = nodeContext.SemanticModel.GetTypeInfo(asBinaryExpression.Right, nodeContext.CancellationToken).ConvertedType;
+                var castType = nodeContext.SemanticModel.GetTypeInfo(asBinaryExpression.Right, nodeContext.CancellationToken).Type;
                 return castType != null && castType.Equals(variableType);
             }
             else if (asBinaryExpression == null)
@@ -147,7 +150,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
                 var castExpression = initializerExpression as CastExpressionSyntax;
                 if (castExpression != null)
                 {
-                    var castExpressionType = nodeContext.SemanticModel.GetTypeInfo(castExpression, nodeContext.CancellationToken).ConvertedType;
+                    var castExpressionType = nodeContext.SemanticModel.GetTypeInfo(castExpression, nodeContext.CancellationToken).Type;
                     return castExpressionType != null && castExpressionType.Equals(variableType);
                 }
             }

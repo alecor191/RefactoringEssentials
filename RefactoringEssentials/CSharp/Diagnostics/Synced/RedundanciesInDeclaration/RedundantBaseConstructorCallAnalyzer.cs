@@ -24,6 +24,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
 
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxNodeAction(
                 (nodeContext) =>
                 {
@@ -40,8 +41,6 @@ namespace RefactoringEssentials.CSharp.Diagnostics
         private static bool TryGetDiagnostic(SyntaxNodeAnalysisContext nodeContext, out Diagnostic diagnostic)
         {
             diagnostic = default(Diagnostic);
-            if (nodeContext.IsFromGeneratedCode())
-                return false;
 
             var constructorDeclaration = nodeContext.Node as ConstructorDeclarationSyntax;
             if (constructorDeclaration?.Initializer?.ArgumentList.Arguments.Count != 0)
@@ -54,7 +53,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
             if (baseInitializer.ArgumentList == null ||
                 baseInitializer.ArgumentList != null && baseInitializer.ArgumentList.Arguments.Count<1)
             {
-                diagnostic = Diagnostic.Create(descriptor, constructorDeclaration.GetLocation());
+                diagnostic = Diagnostic.Create(descriptor, baseInitializer.GetLocation());
                 return true;
             }
             return false;

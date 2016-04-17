@@ -23,6 +23,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
 
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxNodeAction(
                 (nodeContext) =>
                 {
@@ -37,12 +38,10 @@ namespace RefactoringEssentials.CSharp.Diagnostics
         static bool TryGetDiagnostic(SyntaxNodeAnalysisContext nodeContext, out Diagnostic diagnostic)
         {
             diagnostic = default(Diagnostic);
-            if (nodeContext.IsFromGeneratedCode())
-                return false;
             var node = nodeContext.Node as ConditionalExpressionSyntax;
 
-            bool? trueBranch = SimplifyConditionalTernaryExpressionCodeFixProvider.GetBool(node.WhenTrue.SkipParens());
-            bool? falseBranch = SimplifyConditionalTernaryExpressionCodeFixProvider.GetBool(node.WhenFalse.SkipParens());
+            bool? trueBranch = GetBool(node.WhenTrue.SkipParens());
+            bool? falseBranch = GetBool(node.WhenFalse.SkipParens());
 
             if (trueBranch == falseBranch ||
                 trueBranch == true && falseBranch == false) // Handled by RedundantTernaryExpressionIssue
@@ -60,6 +59,14 @@ namespace RefactoringEssentials.CSharp.Diagnostics
                 node.GetLocation()
             );
             return true;
+        }
+
+        internal static bool? GetBool(ExpressionSyntax trueExpression)
+        {
+            var pExpr = trueExpression as LiteralExpressionSyntax;
+            if (pExpr == null || !(pExpr.Token.Value is bool))
+                return null;
+            return (bool)pExpr.Token.Value;
         }
     }
 }
