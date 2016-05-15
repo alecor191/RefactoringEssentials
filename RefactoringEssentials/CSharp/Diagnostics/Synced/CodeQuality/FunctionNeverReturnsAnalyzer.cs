@@ -28,6 +28,7 @@ namespace RefactoringEssentials.CSharp.Diagnostics
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
             {
@@ -214,6 +215,11 @@ namespace RefactoringEssentials.CSharp.Diagnostics
 
                 public override bool VisitInvocationExpression(InvocationExpressionSyntax node)
                 {
+                    // There seems to be no better way to detect a "nameof" expression
+                    var invocationIdentifier = node.ChildNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                    if ((invocationIdentifier != null) && (invocationIdentifier.Identifier.ValueText == "nameof"))
+                        return false;
+
                     if (base.VisitInvocationExpression(node))
                         return true;
                     return CheckRecursion(node);
