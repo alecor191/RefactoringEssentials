@@ -32,7 +32,7 @@ namespace RefactoringEssentials.VsExtension
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        readonly ConvertCSToVBCommandPackage package;
+        readonly REConverterPackage package;
 
         /// <summary>
         /// Gets the instance of the command.
@@ -58,7 +58,7 @@ namespace RefactoringEssentials.VsExtension
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        public static void Initialize(ConvertCSToVBCommandPackage package)
+        public static void Initialize(REConverterPackage package)
         {
             Instance = new ConvertCSToVBCommand(package);
         }
@@ -68,7 +68,7 @@ namespace RefactoringEssentials.VsExtension
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
-        ConvertCSToVBCommand(ConvertCSToVBCommandPackage package)
+        ConvertCSToVBCommand(REConverterPackage package)
         {
             if (package == null)
             {

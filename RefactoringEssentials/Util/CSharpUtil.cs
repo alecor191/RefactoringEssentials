@@ -6,15 +6,6 @@ using Microsoft.CodeAnalysis;
 
 namespace RefactoringEssentials
 {
-    class ReflectionNamespaces
-    {
-        public const string WorkspacesAsmName = ", Microsoft.CodeAnalysis.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-        public const string CSWorkspacesAsmName = ", Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-        public const string VBWorkspacesAsmName = ", Microsoft.CodeAnalysis.VisualBasic.Workspaces, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-        public const string CAAsmName = ", Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-        public const string CACSharpAsmName = ", Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-    }
-
     static class CSharpUtil
     {
         /// <summary>
@@ -80,11 +71,66 @@ namespace RefactoringEssentials
             return SyntaxFactory.PrefixUnaryExpression(SyntaxKind.LogicalNotExpression, AddParensIfRequired(condition, false));
         }
 
-        /// <summary>
-        /// When negating an expression this is required, otherwise you would end up with
-        /// a or b -> !a or b
-        /// </summary>
-        public static ExpressionSyntax AddParensIfRequired(ExpressionSyntax expression, bool parenthesesRequiredForUnaryExpressions = true)
+
+		public static SyntaxKind GetExpressionOperatorTokenKind(SyntaxKind op)
+		{
+			switch (op)
+			{
+				case SyntaxKind.EqualsExpression:
+					return SyntaxKind.EqualsEqualsToken;
+				case SyntaxKind.NotEqualsExpression:
+					return SyntaxKind.ExclamationEqualsToken;
+				case SyntaxKind.GreaterThanExpression:
+					return SyntaxKind.GreaterThanToken;
+				case SyntaxKind.GreaterThanOrEqualExpression:
+					return SyntaxKind.GreaterThanEqualsToken;
+				case SyntaxKind.LessThanExpression:
+					return SyntaxKind.LessThanToken;
+				case SyntaxKind.LessThanOrEqualExpression:
+					return SyntaxKind.LessThanEqualsToken;
+				case SyntaxKind.BitwiseOrExpression:
+					return SyntaxKind.BarToken;
+				case SyntaxKind.LogicalOrExpression:
+					return SyntaxKind.BarBarToken;
+				case SyntaxKind.BitwiseAndExpression:
+					return SyntaxKind.AmpersandToken;
+				case SyntaxKind.LogicalAndExpression:
+					return SyntaxKind.AmpersandAmpersandToken;
+				case SyntaxKind.AddExpression:
+					return SyntaxKind.PlusToken;
+				case SyntaxKind.SubtractExpression:
+					return SyntaxKind.MinusToken;
+				case SyntaxKind.MultiplyExpression:
+					return SyntaxKind.AsteriskToken;
+				case SyntaxKind.DivideExpression:
+					return SyntaxKind.SlashToken;
+				case SyntaxKind.ModuloExpression:
+					return SyntaxKind.PercentToken;
+				// assignments
+				case SyntaxKind.SimpleAssignmentExpression:
+					return SyntaxKind.EqualsToken;
+				case SyntaxKind.AddAssignmentExpression:
+					return SyntaxKind.PlusEqualsToken;
+				case SyntaxKind.SubtractAssignmentExpression:
+					return SyntaxKind.MinusEqualsToken;
+				// unary
+				case SyntaxKind.UnaryPlusExpression:
+					return SyntaxKind.PlusToken;
+				case SyntaxKind.UnaryMinusExpression:
+					return SyntaxKind.MinusToken;
+				case SyntaxKind.LogicalNotExpression:
+					return SyntaxKind.ExclamationToken;
+				case SyntaxKind.BitwiseNotExpression:
+					return SyntaxKind.TildeToken;
+			}
+			throw new ArgumentOutOfRangeException(nameof(op));
+		}
+
+		/// <summary>
+		/// When negating an expression this is required, otherwise you would end up with
+		/// a or b -> !a or b
+		/// </summary>
+		public static ExpressionSyntax AddParensIfRequired(ExpressionSyntax expression, bool parenthesesRequiredForUnaryExpressions = true)
         {
             if ((expression is BinaryExpressionSyntax) ||
                 (expression is AssignmentExpressionSyntax) ||

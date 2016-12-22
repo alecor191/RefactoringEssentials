@@ -15,6 +15,7 @@
     </NuGetPackageImportStamp>
     <RestorePackages>true</RestorePackages>
     <UseCodebase>true</UseCodebase>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -34,7 +35,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RefactoringEssentials.VsExtension</RootNamespace>
     <AssemblyName>RefactoringEssentials.VsExtension</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
     <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
@@ -68,7 +69,7 @@
     <StartArguments>/rootsuffix Roslyn</StartArguments>
   </PropertyGroup>
   <ItemGroup>
-    <VSCTCompile Include="ConvertCSToVBCommandPackage.vsct">
+    <VSCTCompile Include="REConverterPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
     </VSCTCompile>
@@ -102,6 +103,7 @@
       <Project>{c465a5dc-ad28-49a2-89c0-f81838814a7e}</Project>
       <Name>RefactoringEssentials</Name>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
+      <IncludeOutputGroupsInVSIX>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -109,8 +111,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeConversion.cs" />
+    <Compile Include="ConvertVBToCSCommand.cs" />
     <Compile Include="ConvertCSToVBCommand.cs" />
-    <Compile Include="ConvertCSToVBCommandPackage.cs" />
+    <Compile Include="REConverterPackage.cs" />
     <Compile Include="GeneralOptionsDialogPage.cs">
       <SubType>Component</SubType>
     </Compile>
